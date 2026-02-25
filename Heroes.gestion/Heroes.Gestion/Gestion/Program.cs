@@ -1,17 +1,221 @@
-﻿using System.Text;
-using Serilog;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Gestion.Models; // Asegúrate de que tus clases Heroe y Mision existan en esta carpeta
 
+namespace GestionHeroica
+{
+    class Program
+    {
 
-Log.Logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.File("Logs/log.log", rollingInterval: RollingInterval.Day).CreateLogger();
-Title = "Gestión Empresa Héroes";
-OutputEncoding = Encoding.UTF8;
-Clear();
-Main();
-Log.CloseAndFlush();
-WriteLine("\n👋 Presiona una tecla para salir...");
-ReadKey();
-return;
+        // Listas globales para persistir los datos durante la ejecución
+        static List<Heroe> listaHeroes = new List<Heroe>();
+        static List<Mision> listaMisiones = new List<Mision>();
 
-void Main() {
+        static void Main(string[] args)
+        {
+            bool salir = false;
+            while (!salir)
+            {
+                Console.Clear();
+                Console.WriteLine("===SISTEMA DE GESTIÓN DE HÉROES===");
+                Console.WriteLine("1. Crear nuevo Héroe");
+                Console.WriteLine("2. Visualizar Héroes registrados");
+                Console.WriteLine("3. Crear nueva Misión");
+                Console.WriteLine("4. Asignar Héroes a una Misión");
+                Console.WriteLine("5. Simular desarrollo de una Misión");
+                Console.WriteLine("6. Ranking de Héroes (Poder)");
+                Console.WriteLine("7. Buscar Héroes/Misiones");
+                Console.WriteLine("8. Salir");
+                Console.Write("\nSeleccione una opción: ");
+
+                string? opcion = Console.ReadLine();
+
+                switch (opcion)
+                {
+                    case "1": CrearHeroe(); break;
+                    case "2": VisualizarHeroes( listaHeroes); break;
+                    case "3": CrearMision(); break;
+                    case "4": AsignarHeroeAMision(); break;
+                    case "5": SimularMision(); break;
+                    case "6": MostrarRanking(); break;
+                    case "7": Buscar(); break;
+                    case "8": salir = true; break;
+                    default: WriteLine("Opción no válida."); break;
+                }
+
+                if (!salir)
+                {
+                    WriteLine("\nPresione cualquier tecla para continuar...");
+                    ReadKey();
+                }
+            }
+        }
+
+        // --- MÉTODOS DEL MÉNU ---
+
+        
+        static void CrearHeroe()
+        {
+            Console.WriteLine("\n--- RECLUTAR NUEVO HÉROE ---");
+            Console.WriteLine("¿Tipo de héroe? (1. Fuerte / 2. Inteligente)");
+            string? seleccion = ReadLine();
+
+            Console.Write("Nombre: ");
+            string? nombre = ReadLine();
+
+            Console.Write("Nivel inicial: ");
+            int nivel = int.Parse(ReadLine() ?? throw new InvalidOperationException());
+
+            Console.Write("Energía: ");
+            int energia = int.Parse(ReadLine() ?? throw new InvalidOperationException());
+
+            Console.Write("Experiencia: ");
+            int experiencia = int.Parse(ReadLine() ?? throw new InvalidOperationException());
+
+            // Mostrar opciones de Rareza basadas en tu Enum
+            Console.WriteLine("Rareza (Comun, Raro, Epico, Legendario): ");
+            Enum.TryParse(Console.ReadLine(), true, out Heroe.Rarezas rarezaElegida);
+
+            Heroe nuevoHeroe;
+
+            if (seleccion == "1")
+            {
+                Console.Write("Puntos de Fuerza: ");
+                int fuerza = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+
+                // Inicialización con las propiedades 'required'
+                nuevoHeroe = new HeroeFuerte(fuerza)
+                {
+                    Id = listaHeroes.Count + 1,
+                    Nombre = nombre,
+                    Nivel = nivel,
+                    Energia = energia,
+                    Experiencia = experiencia,
+                    Rareza = rarezaElegida,
+                    Fuerza = fuerza,
+                    TipoHeroe = Heroe.TipoHeroes.HeroeFuerte
+                };
+            }
+            else
+            {
+                Console.Write("Puntos de Inteligencia: ");
+                int inteligencia = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+
+                nuevoHeroe = new HeroeInteligente(inteligencia)
+                {
+                    Id = listaHeroes.Count + 1,
+                    Nombre = nombre,
+                    Nivel = nivel,
+                    Energia = energia,
+                    Experiencia = experiencia,
+                    Rareza = rarezaElegida,
+                    Inteligencia = inteligencia,
+                    TipoHeroe = Heroe.TipoHeroes.HeroeInteligente
+                };
+            }
+
+            listaHeroes.Add(nuevoHeroe);
+            Console.WriteLine($"\n✅ ¡{nuevoHeroe.Nombre} ({nuevoHeroe.TipoHeroe}) ha sido registrado con éxito!");
+        }
+
     
+
+     static void VisualizarHeroes(IEnumerable listaHeroes)
+    {
+        Console.WriteLine("\n--- LISTA DE HÉROES ---");
+
+        // Convertimos a Heroe para poder usar los métodos de lista
+        var listaFiltro = listaHeroes.Cast<Heroe>();
+
+        if (listaFiltro.Count() == 0) 
+        {
+            Console.WriteLine("No hay héroes registrados.");
+            return;
+        }
+
+        foreach (Heroe h in listaFiltro) 
+        {
+            Console.WriteLine(h.ToString());
+        }
+    }
+        static void CrearMision()
+        {
+            Console.Write("Nombre de la misión: ");
+            string? nombre = Console.ReadLine();
+            Console.Write("Dificultad (1-10): ");
+            
+            if (int.TryParse(Console.ReadLine(), out int dif))
+            {
+                listaMisiones.Add(new Mision(nombre, dif));
+                Console.WriteLine("Misión registrada.");
+            }
+            else
+            {
+                Console.WriteLine("Dificultad no válida. Debe ser un número.");
+            }
+        }
+
+        static void AsignarHeroeAMision()
+        {
+            if (listaHeroes.Count == 0 || listaMisiones.Count == 0)
+            {
+                Console.WriteLine("Necesitas al menos un héroe y una misión.");
+                return;
+            }
+
+            VisualizarHeroes(listaHeroes);
+            Console.Write("ID del Héroe: ");
+            int idH = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+            
+            for (int i = 0; i < listaMisiones.Count; i++) 
+                Console.WriteLine($"{i}. {listaMisiones[i].Nombre}");
+            
+            Console.Write("Índice de la Misión: ");
+            int idM = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+
+            var heroe = listaHeroes.FirstOrDefault(h => h.Id == idH);
+            if (heroe != null && idM < listaMisiones.Count)
+            {
+                listaMisiones[idM].AsignarHeroe(heroe);
+                Console.WriteLine("Héroe asignado.");
+            }
+        }
+
+        static void SimularMision()
+        {
+            if (listaMisiones.Count == 0) return;
+
+            Console.WriteLine("Seleccione misión a ejecutar:");
+            for (int i = 0; i < listaMisiones.Count; i++)
+                Console.WriteLine($"{i}. {listaMisiones[i].Nombre} ({listaMisiones[i].Estado})");
+
+            if (int.TryParse(Console.ReadLine(), out int indice) && indice < listaMisiones.Count)
+            {
+                listaMisiones[indice].ResolverMision();
+            }
+        }
+
+        static void MostrarRanking()
+        {
+            Console.WriteLine("\n--- TOP HÉROES POR PODER ---");
+            var ranking = listaHeroes.OrderByDescending(h => h.CalcularPoder()).ToList();
+            for (int i = 0; i < ranking.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {ranking[i].Nombre} - Poder: {ranking[i].CalcularPoder()}");
+            }
+        }
+
+        static void Buscar()
+        {
+            Console.Write("Ingrese nombre a buscar: ");
+            string? entrada = Console.ReadLine();
+            if (string.IsNullOrEmpty(entrada)) return;
+
+            string busqueda = entrada.ToLower();
+            var encontrados = listaHeroes.Where(h => h.Nombre != null && h.Nombre.ToLower().Contains(busqueda));
+            foreach (var h in encontrados) Console.WriteLine(h.ToString());
+        }
+    }
 }

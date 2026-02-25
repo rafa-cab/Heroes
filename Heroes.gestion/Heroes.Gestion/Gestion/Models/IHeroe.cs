@@ -3,5 +3,5 @@
 public interface IHeroe {
     void Descansar();
     int CalcularPoder();
-    void SumarExperiencia(int xp);
+    void GanarExperiencia(int xp);
 }
