@@ -12,8 +12,11 @@ public sealed class HeroeFuerte : Heroe
         Fuerza = fuerza;
     }
     
-    public override int CalcularPoder() => 
-        (int)(Energia + (Nivel * 10) + Fuerza + Rareza);
+    public override int CalcularPoder() 
+    {
+        double poderCalculado = (Fuerza * 1.5) + (Energia * 0.2);
+        return (int)poderCalculado;
+    }
     
     public override string ToString() => base.ToString() + $" | Fuerza: {Fuerza}";
 }

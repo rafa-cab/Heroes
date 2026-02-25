@@ -17,7 +17,7 @@ public abstract class Heroe : IHeroe
     public required int Nivel { get; set; }
     public required TipoHeroes TipoHeroe { get; set; }
     public required int Energia { get; set; }
-    public required int Experiencia { get; set; }
+    public  int Experiencia { get; set; }
     public required Rarezas Rareza { get; set; }
 
     public enum Rarezas
@@ -35,6 +35,14 @@ public abstract class Heroe : IHeroe
     HeroeFuerte,
     HeroeInteligente
     } 
+  
+
+    protected virtual void SubirNivel()
+    {
+        Nivel++;
+        Experiencia -= 100;
+        Console.WriteLine($"¡SUBIDA DE NIVEL! {Nombre} ahora es nivel {Nivel}.");
+    }
 
    
 
@@ -79,7 +87,17 @@ public abstract class Heroe : IHeroe
             }
         }
     }
+    /*public virtual void GanarExperiencia(int cantidad)
+    {
+        Experiencia += cantidad;
+        Console.WriteLine($"{Nombre} ha ganado {cantidad} de experiencia.");
 
+        // Lógica simple de subida de nivel (cada 100 puntos)
+        if (Experiencia >= 100)
+        {
+            SubirNivel();
+        }
+    }*/
     public void PerderEnergia(int cantidad)
     {
         Energia = Math.Max(0, Energia - cantidad);
@@ -91,3 +109,4 @@ public abstract class Heroe : IHeroe
 
 }
 
+  
