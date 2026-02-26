@@ -17,6 +17,15 @@ public sealed class HeroeFuerte : Heroe
         double poderCalculado = (Fuerza * 1.5) + (Energia * 0.2);
         return (int)poderCalculado;
     }
-    
-    public override string ToString() => base.ToString() + $" | Fuerza: {Fuerza}";
+
+    public override void SubirNivel()
+    {
+        base.SubirNivel();
+        Fuerza += 2;
+        WriteLine("bono de Clase : +2 Fuerza (Total: {Fuerza})");
+    }
+public override string ToString() => base.ToString() + $" | Fuerza: {Fuerza}";
 }
+
+    
+    

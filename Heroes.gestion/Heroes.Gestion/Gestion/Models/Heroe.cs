@@ -8,11 +8,8 @@ public abstract class Heroe : IHeroe
 
     protected Heroe(string fuerte)
     {
-     
-    }
-
-
-    public required int Id { get; init; }
+        
+    } public required int Id { get; init; }
     public required string? Nombre { get; init; }
     public required int Nivel { get; set; }
     public required TipoHeroes TipoHeroe { get; set; }
@@ -34,10 +31,10 @@ public abstract class Heroe : IHeroe
     {
     HeroeFuerte,
     HeroeInteligente
-    } 
-  
+    }
 
-    protected virtual void SubirNivel()
+
+    public virtual void SubirNivel()
     {
         Nivel++;
         Experiencia -= 100;
