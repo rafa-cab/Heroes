@@ -3,28 +3,40 @@ namespace Gestion.Models;
 public class Mision
 {
 
-    public string? Nombre { get; set; }
-    public int Dificultad { get; set; } // 1 al 10
-    public string Estado { get; set; } = "Pendiente";
-
-    // Lista para almacenar los héroes asignados
+    public required string Nombre { get;set ; }
+    public required int Dificultad { get; set; } // 1 al 10
+    public EstadoMision Estado { get; set; }
     public List<Heroe> HeroesAsignados { get; set; } = new List<Heroe>();
+    public enum EstadoMision 
+    {
 
-    public Mision(string? nombre, int dificultad)
+        Completada = 1,
+        Fallida = 2,
+        Pendiente = 3,
+
+    };
+    
+
+    public Mision(string nombre, int dificultad)
     {
         Nombre = nombre;
         Dificultad = dificultad;
+        Estado = EstadoMision.Completada;
+        Estado = EstadoMision.Fallida;
+        Estado = EstadoMision.Pendiente;
     }
-
+    
     // MÉTODO PARA AÑADIR HÉROES
     public void AsignarHeroe(Heroe h)
     {
-        if (Estado == "Pendiente")
+        if (Estados == "2")
         {
             HeroesAsignados.Add(h);
             Console.WriteLine($"{h.Nombre} ha sido unido a la misión {Nombre}.");
         }
     }
+
+    public required string? Estados { get; set; }
 
     public void ResolverMision()
     {
@@ -33,30 +45,32 @@ public class Mision
         int poderTotal = HeroesAsignados.Sum(h => h.CalcularPoder());
 
         Console.WriteLine($"\n--- ⚔️ EJECUTANDO MISIÓN: {Nombre} ---");
-        Console.WriteLine($"Poder del equipo: {poderTotal} | Requerido: {poderRequerido}");
-
-        if (poderTotal >= poderRequerido)
+        Console.WriteLine($"Poder del equipo: {poderTotal} | Requerido: {poderRequerido}"); 
+        if (HeroesAsignados.Count == 0)
         {
-            Estado = "Completada";
-            Console.WriteLine("✅ ¡Misión Exitosa!");
+            Console.WriteLine("⚠️ No puedes iniciar una misión sin héroes.");
+            return;
+        }
 
-            foreach (var h in HeroesAsignados)
-            {
-                // Llamamos al método con la cantidad de XP (ejemplo: 50 * dificultad)
-                h.GanarExperiencia(50 * Dificultad);
-            }
+        Estado = EstadoMision.Pendiente;
+        Console.WriteLine($"🚀 Iniciando misión: {Nombre}...");
+
+       
+        foreach (var h in HeroesAsignados)
+        {
+            poderTotal += h.CalcularPoder();
+        }
+
+        // Lógica de éxito: Dificultad * 20 (por ejemplo)
+        if (poderTotal >= (Dificultad * 20))
+        {
+            Estado = EstadoMision.Completada; // 👈 Cambio de estado a Éxito
+            Console.WriteLine("✅ ¡Misión SUPERADA!");
         }
         else
         {
-            Estado = "Fallida";
-            Console.WriteLine("❌ La misión ha fracasado...");
-
-            foreach (var h in HeroesAsignados)
-            {
-                // Usamos el nuevo método de pérdida de energía
-                h.PerderEnergia(10 * Dificultad);
-            }
-
+            Estado = EstadoMision.Fallida;    // 👈 Cambio de estado a Fracaso
+            Console.WriteLine("❌ Misión FALLIDA.");
         }
     }
 

@@ -30,7 +30,7 @@ namespace GestionHeroica
                 Console.WriteLine("8. Salir");
                 Console.Write("\nSeleccione una opción: ");
 
-                string? opcion = Console.ReadLine();
+                string? opcion = ReadLine();
 
                 switch (opcion)
                 {
@@ -38,7 +38,7 @@ namespace GestionHeroica
                     case "2": VisualizarHeroes( listaHeroes); break;
                     case "3": CrearMision(); break;
                     case "4": AsignarHeroeAMision(); break;
-                    case "5": SimularMision(); break;
+                    // case "5": SimularMision(); break; //
                     case "6": MostrarRanking(); break;
                     case "7": Buscar(); break;
                     case "8": salir = true; break;
@@ -63,7 +63,7 @@ namespace GestionHeroica
             string? seleccion = ReadLine();
 
             Console.Write("Nombre: ");
-            string? nombre = ReadLine();
+            string nombre = Console.ReadLine()!;
 
             Console.Write("Nivel inicial: ");
             int nivel = int.Parse(ReadLine() ?? throw new InvalidOperationException());
@@ -143,12 +143,18 @@ namespace GestionHeroica
         static void CrearMision()
         {
             Console.Write("Nombre de la misión: ");
-            string? nombre = Console.ReadLine();
+            string  nombre = Console.ReadLine()!;
             Console.Write("Dificultad (1-10): ");
             
             if (int.TryParse(Console.ReadLine(), out int dif))
             {
-                listaMisiones.Add(new Mision(nombre, dif));
+                listaMisiones.Add(new Mision(nombre, dif)
+                {
+                    Nombre = nombre,
+                    Dificultad = 0,
+                    Estado = Mision.EstadoMision.Pendiente,
+                    Estados = null
+                });
                 Console.WriteLine("Misión registrada.");
             }
             else
@@ -183,20 +189,60 @@ namespace GestionHeroica
             }
         }
 
-        static void SimularMision()
+        /*ublic void SimularMision()
         {
-            if (listaMisiones.Count == 0) return;
-
-            Console.WriteLine("Seleccione misión a ejecutar:");
-            for (int i = 0; i < listaMisiones.Count; i++)
-                Console.WriteLine($"{i}. {listaMisiones[i].Nombre} ({listaMisiones[i].Estado})");
-
-            if (int.TryParse(Console.ReadLine(), out int indice) && indice < listaMisiones.Count)
+            // 1. Verificación de seguridad
+            if (HeroeAsignado == 0)
             {
-                listaMisiones[indice].ResolverMision();
+                Console.WriteLine("⚠️ No hay héroes asignados a esta misión.");
+                return;
             }
-        }
 
+            // 2. Cálculo del Poder Total (con foreach como pediste)
+            double poderTotalEquipo = 0;
+            foreach (Heroe h in EquipoAsignado)
+            {
+                // Aquí se ejecuta el override de cada clase (Fuerte o Inteligente)
+                poderTotalEquipo += h.CalcularPoderTotal();
+            }
+
+            // 3. Definición del umbral de victoria
+            double umbralVictoria = Dificultad * 80;
+
+            Console.WriteLine($"--- Reporte de Misión: {Nombre} ---");
+            Console.WriteLine($"Poder del Equipo: {poderTotalEquipo} | Umbral Necesario: {umbralVictoria}");
+
+            // 4. Resolución de la misión
+            if (poderTotalEquipo >= umbralVictoria)
+            {
+                // --- CASO: ÉXITO ---
+                Estado = EstadoMision.Completada;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("✅ ¡ÉXITO TOTAL! Los héroes regresan victoriosos.");
+                Console.ResetColor();
+
+                foreach (Heroe h in EquipoAsignado)
+                {
+                    h.GanarExperiencia(50); // Esto disparará el SubirNivel() y sus efectos secundarios
+                }
+            }
+            else
+            {
+                // --- CASO: FRACASO ---
+                Estado = EstadoMision.Fallida;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("❌ FRACASO. El equipo ha sido repelido.");
+                Console.ResetColor();
+
+                foreach (Heroe h in HeroeAsignado)
+                {
+                    h.Energia -= 30; // Los héroes terminan agotados
+                    if (h.Energia < 0) h.Energia = 0; // Evitamos energía negativa
+                }
+            }
+        }*/
+
+       
         static void MostrarRanking()
         {
             Console.WriteLine("\n--- TOP HÉROES POR PODER ---");
@@ -210,7 +256,7 @@ namespace GestionHeroica
         static void Buscar()
         {
             Console.Write("Ingrese nombre a buscar: ");
-            string? entrada = Console.ReadLine();
+            string  entrada = Console.ReadLine()!;
             if (string.IsNullOrEmpty(entrada)) return;
 
             string busqueda = entrada.ToLower();

@@ -10,7 +10,7 @@ public abstract class Heroe : IHeroe
     {
         
     } public required int Id { get; init; }
-    public required string? Nombre { get; init; }
+    public required string Nombre { get; set; }
     public required int Nivel { get; set; }
     public required TipoHeroes TipoHeroe { get; set; }
     public required int Energia { get; set; }
@@ -60,7 +60,7 @@ public abstract class Heroe : IHeroe
 
     public void GanarExperiencia(int xp)
     {
-        Console.WriteLine($"✨ {Nombre} ha ganado {xp} de experiencia.");
+        WriteLine($"✨ {Nombre} ha ganado {xp} de experiencia.");
 
         // Tu lógica de While actual está muy bien, solo asegúrate de que use HeroesConfig
         while (xp > 0)
@@ -75,7 +75,7 @@ public abstract class Heroe : IHeroe
                 xp -= (objetivo - Experiencia);
                 Experiencia = 0;
                 Nivel++;
-                Console.WriteLine($"⭐ ¡SUBIDA DE NIVEL! {Nombre} ahora es Nivel {Nivel}.");
+                WriteLine($"⭐ ¡SUBIDA DE NIVEL! {Nombre} ahora es Nivel {Nivel}.");
             }
             else
             {
@@ -83,19 +83,7 @@ public abstract class Heroe : IHeroe
                 xp = 0;
             }
         }
-    }
-    /*public virtual void GanarExperiencia(int cantidad)
-    {
-        Experiencia += cantidad;
-        Console.WriteLine($"{Nombre} ha ganado {cantidad} de experiencia.");
-
-        // Lógica simple de subida de nivel (cada 100 puntos)
-        if (Experiencia >= 100)
-        {
-            SubirNivel();
-        }
-    }*/
-    public void PerderEnergia(int cantidad)
+    } public void PerderEnergia(int cantidad)
     {
         Energia = Math.Max(0, Energia - cantidad);
         Console.WriteLine($"🔋 {Nombre} ha perdido energía. Energía restante: {Energia}");
