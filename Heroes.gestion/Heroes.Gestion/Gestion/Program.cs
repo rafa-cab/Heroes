@@ -27,7 +27,8 @@ namespace GestionHeroica
                 Console.WriteLine("5. Simular desarrollo de una Misión");
                 Console.WriteLine("6. Ranking de Héroes (Poder)");
                 Console.WriteLine("7. Buscar Héroes/Misiones");
-                Console.WriteLine("8. Salir");
+                WriteLine("8. Salir");
+                WriteLine("9.Nico");
                 Console.Write("\nSeleccione una opción: ");
 
                 string? opcion = ReadLine();
@@ -38,10 +39,12 @@ namespace GestionHeroica
                     case "2": VisualizarHeroes( listaHeroes); break;
                     case "3": CrearMision(); break;
                     case "4": AsignarHeroeAMision(); break;
-                    // case "5": SimularMision(); break; //
+                    case "5": SimularMisionMenu(); break; 
                     case "6": MostrarRanking(); break;
                     case "7": Buscar(); break;
                     case "8": salir = true; break;
+                    case "9": Nico() ;
+                        break;
                     default: WriteLine("Opción no válida."); break;
                 }
 
@@ -165,85 +168,44 @@ namespace GestionHeroica
 
         static void AsignarHeroeAMision()
         {
-            if (listaHeroes.Count == 0 || listaMisiones.Count == 0)
-            {
-                Console.WriteLine("Necesitas al menos un héroe y una misión.");
+            if (listaHeroes.Count == 0 || listaMisiones.Count == 0) {
+                Console.WriteLine("Faltan héroes o misiones.");
                 return;
             }
+            // Listar misiones para elegir
+            for (int i = 0; i < listaMisiones.Count; i++) Console.WriteLine($"{i}. {listaMisiones[i].Nombre}");
+            Console.Write("Seleccione índice de Misión: ");
+            int idM = int.Parse(Console.ReadLine() ?? "0");
 
             VisualizarHeroes(listaHeroes);
-            Console.Write("ID del Héroe: ");
-            int idH = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
-            
-            for (int i = 0; i < listaMisiones.Count; i++) 
-                Console.WriteLine($"{i}. {listaMisiones[i].Nombre}");
-            
-            Console.Write("Índice de la Misión: ");
-            int idM = int.Parse(Console.ReadLine() ?? throw new InvalidOperationException());
+            Console.Write("ID del Héroe a añadir: ");
+            int idH = int.Parse(Console.ReadLine() ?? "0");
 
             var heroe = listaHeroes.FirstOrDefault(h => h.Id == idH);
-            if (heroe != null && idM < listaMisiones.Count)
-            {
+            if (heroe != null && idM < listaMisiones.Count) {
                 listaMisiones[idM].AsignarHeroe(heroe);
-                Console.WriteLine("Héroe asignado.");
+                Console.WriteLine($"✅ {heroe.Nombre} asignado a {listaMisiones[idM].Nombre}");
             }
         }
 
-        /*ublic void SimularMision()
+        static void SimularMisionMenu()
         {
-            // 1. Verificación de seguridad
-            if (HeroeAsignado == 0)
-            {
-                Console.WriteLine("⚠️ No hay héroes asignados a esta misión.");
+            if (listaMisiones.Count == 0) {
+                Console.WriteLine("No hay misiones para simular.");
                 return;
             }
 
-            // 2. Cálculo del Poder Total (con foreach como pediste)
-            double poderTotalEquipo = 0;
-            foreach (Heroe h in EquipoAsignado)
+            for (int i = 0; i < listaMisiones.Count; i++) 
+                Console.WriteLine($"{i}. {listaMisiones[i].Nombre} (Estado: {listaMisiones[i].Estado})");
+
+            Console.Write("Seleccione índice de misión para simular: ");
+            if (int.TryParse(Console.ReadLine(), out int index) && index < listaMisiones.Count)
             {
-                // Aquí se ejecuta el override de cada clase (Fuerte o Inteligente)
-                poderTotalEquipo += h.CalcularPoderTotal();
+                // Aquí llamamos al método que DEBE ESTAR dentro de la clase Mision
+                listaMisiones[index].SimularMisionMenu();
             }
-
-            // 3. Definición del umbral de victoria
-            double umbralVictoria = Dificultad * 80;
-
-            Console.WriteLine($"--- Reporte de Misión: {Nombre} ---");
-            Console.WriteLine($"Poder del Equipo: {poderTotalEquipo} | Umbral Necesario: {umbralVictoria}");
-
-            // 4. Resolución de la misión
-            if (poderTotalEquipo >= umbralVictoria)
-            {
-                // --- CASO: ÉXITO ---
-                Estado = EstadoMision.Completada;
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("✅ ¡ÉXITO TOTAL! Los héroes regresan victoriosos.");
-                Console.ResetColor();
-
-                foreach (Heroe h in EquipoAsignado)
-                {
-                    h.GanarExperiencia(50); // Esto disparará el SubirNivel() y sus efectos secundarios
-                }
-            }
-            else
-            {
-                // --- CASO: FRACASO ---
-                Estado = EstadoMision.Fallida;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("❌ FRACASO. El equipo ha sido repelido.");
-                Console.ResetColor();
-
-                foreach (Heroe h in HeroeAsignado)
-                {
-                    h.Energia -= 30; // Los héroes terminan agotados
-                    if (h.Energia < 0) h.Energia = 0; // Evitamos energía negativa
-                }
-            }
-        }*/
-
-       
-        static void MostrarRanking()
+            else { Console.WriteLine("Selección inválida."); }
+        } static void MostrarRanking()
         {
             Console.WriteLine("\n--- TOP HÉROES POR PODER ---");
             var ranking = listaHeroes.OrderByDescending(h => h.CalcularPoder()).ToList();
@@ -263,5 +225,14 @@ namespace GestionHeroica
             var encontrados = listaHeroes.Where(h => h.Nombre != null && h.Nombre.ToLower().Contains(busqueda));
             foreach (var h in encontrados) Console.WriteLine(h.ToString());
         }
+
+        static void Nico()
+        {
+            WriteLine("--------------------------------");
+            WriteLine("Nico es muchisimo peor que Rafa ");
+            WriteLine("--------------------------------");
+        }
     }
+    
+    
 }

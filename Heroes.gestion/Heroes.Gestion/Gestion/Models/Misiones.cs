@@ -38,7 +38,7 @@ public class Mision
 
     public required string? Estados { get; set; }
 
-    public void ResolverMision()
+    public void SimularMisionMenu()
     {
         // El umbral ahora depende de la dificultad (puedes ajustar el multiplicador)
         int poderRequerido = Dificultad * 100;
@@ -73,5 +73,28 @@ public class Mision
             Console.WriteLine("❌ Misión FALLIDA.");
         }
     }
+    /*public void SimularMision() 
+    {
+        if (Asignado == null || EquipoAsignado.Count == 0)
+        {
+            Console.WriteLine("⚠️ No hay héroes en esta misión.");
+            return;
+        }
 
+        double poderTotal = EquipoAsignado.Sum(h => h.CalcularPoderTotal());
+        double umbral = Dificultad * 80;
+
+        Console.WriteLine($"\nSimulando: {Nombre}...");
+        if (poderTotal >= umbral) {
+            Estado = EstadoMision.Completada;
+            Console.WriteLine("✅ ¡Victoria!");
+            foreach(var h in EquipoAsignado) h.GanarExperiencia(50);
+        } else {
+            Estado = EstadoMision.Fallida;
+            Console.WriteLine("❌ Fracaso.");
+            foreach(var h in EquipoAsignado) h.Energia = Math.Max(0, h.Energia - 30);
+        }
+    }*/
+
+    
 }
