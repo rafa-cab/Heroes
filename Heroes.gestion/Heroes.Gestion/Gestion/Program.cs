@@ -29,7 +29,7 @@ namespace GestionHeroica
                 Console.WriteLine("7. Buscar Héroes/Misiones");
                 WriteLine("8. Salir");
                 WriteLine("9.Nico");
-                Console.Write("\nSeleccione una opción: ");
+                Write("\nSeleccione una opción: ");
 
                 string? opcion = ReadLine();
 
@@ -79,7 +79,7 @@ namespace GestionHeroica
 
             // Mostrar opciones de Rareza basadas en tu Enum
             Console.WriteLine("Rareza (Comun, Raro, Epico, Legendario): ");
-            Enum.TryParse(Console.ReadLine(), true, out Heroe.Rarezas rarezaElegida);
+            Enum.TryParse(ReadLine(), true, out Heroe.Rarezas rarezaElegida);
 
             Heroe nuevoHeroe;
 

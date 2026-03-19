@@ -86,7 +86,7 @@ public abstract class Heroe : IHeroe
     } public void PerderEnergia(int cantidad)
     {
         Energia = Math.Max(0, Energia - cantidad);
-        Console.WriteLine($"🔋 {Nombre} ha perdido energía. Energía restante: {Energia}");
+        WriteLine($"🔋 {Nombre} ha perdido energía. Energía restante: {Energia}");
     }
 
     public override string ToString() =>
